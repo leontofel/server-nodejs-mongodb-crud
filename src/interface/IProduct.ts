@@ -1,3 +1,5 @@
+// will change to typescript in the future
+
 export interface IProduct {
     title: string,
     price: number,
