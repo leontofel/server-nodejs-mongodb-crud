@@ -3,6 +3,7 @@ import db from './config/dbConnect.js';
 import routes from './routes/index.js'
 import cors from 'cors';
 
+
 db.on("error", console.log.bind(console, 'Connection Error'));
 db.once("open", () => {
     console.log("Connection with database established");
@@ -10,11 +11,16 @@ db.once("open", () => {
 
 const app = express();
 
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+
 app.use(express.json());
 
 routes(app);
 
 
-
-app.use(cors())
 export default app;

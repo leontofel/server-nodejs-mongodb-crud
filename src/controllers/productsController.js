@@ -3,6 +3,7 @@ import products from "../models/Product.js";
 export default class ProductsController {
     static listProduct = (req, res) => {
         products.find()
+        .populate()
         .exec((err, products) => {
             if (err) console.log(err);
             if (products) res.status(200).json(products);
