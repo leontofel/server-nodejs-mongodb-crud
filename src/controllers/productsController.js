@@ -1,4 +1,5 @@
 import products from "../models/Product.js";
+import mongoose from "mongoose";
 
 export default class ProductsController {
     static listProduct = (req, res) => {
@@ -10,18 +11,63 @@ export default class ProductsController {
         });
     }
 
-    static listProductById = (req, res) => {
-        const id = req.params.id;
-
-        products.findById(id)
-        .populate('product', 'title')
-        .exec((err, products) => {
-            if (err) {
-                res.status(400).send({ message: `${err.message} - product id was not found` })
-            } else {
-                res.status(200).send(products);
-            }
+    static listProductBySearch = (req, res) => {
+        products.find( {"title": req.body.title})
+        .populate()
+        .exec((err, product) => {
+            if (err) console.log(err);
+            if (product) res.status(200).json(product);
         })
+    }
+    
+    /*
+    static getProductMediumCard = (req, res) => {
+        products.find()
+        .limit(4)    
+        .populate()
+        .exec((err, products) => {
+            if(err) console.log(err);
+            if(products) res.status(200).json(products);
+        })
+        */
+    
+    static getProductSingleCard = (req, res) => {
+        products.count()
+        .exec((err, count) => {
+            let random = Math.floor(Math.random() * count);
+            products.findOne().skip(random).exec((err, result) => {
+                if(err) console.log(err);
+                if(result) res.status(200).json(result);
+            })
+
+        })
+    }
+    
+    static getProductMediumCard = (req, res) => {
+        products.count()
+        .exec((err, count) => {
+            let random = Math.floor(Math.random() * count);
+            products.find().limit(4).skip(random).exec((err, result) => {
+                if(err) console.log(err);
+                if(result) res.status(200).json(result);
+            })
+
+        })
+    }
+
+
+    static listProductById = (req, res) => {
+        const {id} = req.params;
+             products.find({"_id": mongoose.Types.ObjectId(id)})
+             .populate()
+            .exec((err, products) => {
+                if (err) {
+                    res.status(400).send({ message: `${err.message} - product id was not found` })
+                } else {
+                   res.status(200).send(products);
+                }
+            })
+        
     }
 
     static addProduct = (req, res) => {
