@@ -1,21 +1,16 @@
 import mongoose from "mongoose";
-//import { IProduct } from "../interface/IProduct";
 
 const productSchema = new mongoose.Schema({
-    _id: { String },
-    title: { String },
-    price: { Number },
-    description: { String },
-    photos: { Array },
-    type: { String },
-    comments: { Array, },
-    features: { Array,  }
+    codigo: { String },
+    descricao: { String },
+    preco: { Number },
+    data_cadastro: { Date },
 },
 {
     strictPopulate: false
 })
 
-const products = mongoose.model('product', productSchema);
+const products = mongoose.model('Product', productSchema);
 
 
 export default products;

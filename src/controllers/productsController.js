@@ -1,6 +1,7 @@
 import products from "../models/Product.js";
 import mongoose from "mongoose";
 
+
 export default class ProductsController {
     static listProduct = (req, res) => {
         products.find()
@@ -10,82 +11,33 @@ export default class ProductsController {
             if (products) res.status(200).json(products);
         });
     }
-
-    static listProductBySearch = (req, res) => {
-        products.find( {"title": req.body.title})
-        .populate()
-        .exec((err, product) => {
-            if (err) console.log(err);
-            if (product) res.status(200).json(product);
-        })
-    }
     
-    /*
-    static getProductMediumCard = (req, res) => {
-        products.find()
-        .limit(4)    
-        .populate()
-        .exec((err, products) => {
-            if(err) console.log(err);
-            if(products) res.status(200).json(products);
-        })
-        */
-    
-    static getProductSingleCard = (req, res) => {
-        products.count()
-        .exec((err, count) => {
-            let random = Math.floor(Math.random() * count);
-            products.findOne().skip(random).exec((err, result) => {
-                if(err) console.log(err);
-                if(result) res.status(200).json(result);
-            })
 
-        })
-    }
-    
-    static getProductMediumCard = (req, res) => {
-        products.count()
-        .exec((err, count) => {
-            let random = Math.floor(Math.random() * count);
-            products.find().limit(4).skip(random).exec((err, result) => {
-                if(err) console.log(err);
-                if(result) res.status(200).json(result);
-            })
-
-        })
-    }
-
-
-    static listProductById = (req, res) => {
-        const {id} = req.params;
-             products.find({"_id": mongoose.Types.ObjectId(id)})
-             .populate()
-            .exec((err, products) => {
-                if (err) {
-                    res.status(400).send({ message: `${err.message} - product id was not found` })
-                } else {
-                   res.status(200).send(products);
-                }
-            })
-        
-    }
-
-    static addProduct = (req, res) => {
-        let product = new products(req.body);
-        product.save((err) => {
+    static addProduct = (req, res, next) => {
+        let product = new products({
+            _id: mongoose.Types.ObjectId(),
+            codigo: req.body.codigo,
+            descricao: req.body.descricao,
+            preco: req.body.preco,
+            data_cadastro: req.body.data_cadastro
+        });
+        products.insertOne({product}, function(err) {
             if (err) {
                 res.status(500).send({ message: `${err.message} - failed to add product.` });
             } else {
                 res.status(201).send(product.toJSON());
             }
-        });
+        })
+        
 
     }
 
     static updateProduct = (req, res) => {
         const id = req.params.id;
 
-        products.findByIdAndUpdate(id, { $set: req.body }, (err) => {
+        products.find({"_id": mongoose.Types.ObjectId(id)}) 
+            .updateOne({ $set: req.body })
+            .exec((err) => {
             if (!err) {
                 res.status(200).send({ message: 'The product was updated.' });
             } else {
@@ -97,7 +49,9 @@ export default class ProductsController {
     static deleteProduct = (req, res) => {
         const id = req.params.id;
 
-        products.findByIdAndDelete(id, (err) => {
+        products.find({"_id": mongoose.Types.ObjectId(id)})
+        .deleteOne()
+        .exec((err) => {
             if (!err) {
                 res.status(200).send({ message: 'product was successfully deleted' })
             } else {
@@ -106,13 +60,6 @@ export default class ProductsController {
         })
     }
 
-    static listProductByType = (req, res) => {
-        const type = req.query.type;
-        products.find({'type': type}, {}, (err, products) => {
-            res.status(200).send(products);
-        })
-
-    }
 }
 
 

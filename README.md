@@ -1,3 +1,3 @@
-# server
+# server - Projeto CRUD simples
 
-Back-end for the Leonzon project. Made using node.js, express, mongodb atlas and mongoose. 
+Back-end para o CRUD de produtos. Feito com node.js, express, mongodb atlas e mongoose. 
