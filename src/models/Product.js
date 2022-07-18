@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-    codigo: { String },
-    descricao: { String },
-    preco: { Number },
-    data_cadastro: { Date },
+    codigo:  Number ,
+    descricao:  String ,
+    preco:  Number ,
+    data_cadastro:  Date ,
 },
 {
     strictPopulate: false
